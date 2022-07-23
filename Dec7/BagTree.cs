@@ -21,6 +21,10 @@ namespace Dec7
 
 		private bool Contains(string startColor, string searchColor)
 		{
+			if (deadEnds == null)
+			{
+				deadEnds = new();
+			}
 			if (deadEnds.Contains(startColor))
 			{
 				return false;
@@ -46,6 +50,31 @@ namespace Dec7
 			{
 				deadEnds.Add(startColor);
 				return false;
+			}
+		}
+
+		public int Count()
+		{
+			//Subtract 1 so we don't count the outermost bag
+			return Count(rootColor) - 1;
+		}
+		
+		private int Count(string color)
+		{
+			if (rules.TryGetValue(color, out List<string>? children))
+			{
+				int bagCount = 1;
+				foreach (string thisChild in children)
+				{
+					var data = thisChild.Split("|");
+					int childCount = int.Parse(data[0]);
+					bagCount += childCount * Count(data[1]);
+				}
+				return bagCount;
+			}
+			else
+			{
+				return 1;
 			}
 		}
 

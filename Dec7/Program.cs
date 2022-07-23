@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 
 var allLines = System.IO.File.ReadAllLines("input.txt");
 Part1(allLines);
+Part2(allLines);
 
 static void Part1(string[] allLines)
 {
@@ -27,4 +28,10 @@ static void Part1(string[] allLines)
 		}
 	}
 	Console.WriteLine($"Part 1: {shinyGoldBagCount}");
+}
+
+static void Part2(string[] allLines)
+{
+	int insideCount = (new BagTree("shiny gold")).Count();
+	Console.WriteLine($"Part2: {insideCount}");
 }
