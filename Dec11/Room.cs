@@ -7,6 +7,7 @@
 		private readonly List<char> layout = new();
 		private List<char> previousLayout = new();
 		private readonly Dictionary<int, List<int>> neighbors = new();
+		private readonly Dictionary<int, List<int>> neighborsVisible = new();
 
 		public Room(string[] initialLayout)
 		{
@@ -19,6 +20,12 @@
 					layout.Add(thisLocation);
 				}
 			}
+			PopulateNeighbors();
+			PopulateNeighborsVisible();
+		}
+
+		private void PopulateNeighbors()
+		{
 			for (int i = 0; i < layout.Count; i++)
 			{
 				if (layout[i] == '.')
@@ -43,14 +50,55 @@
 							{
 								theseNeighbors.Add(neighborIndex);
 							}
-						}						
+						}
 					}
 				}
 				neighbors.Add(i, theseNeighbors);
 			}
 		}
 
-		public int CountOccupied()
+		private void PopulateNeighborsVisible()
+		{
+			for (int i = 0; i < layout.Count; i++)
+			{
+				if (layout[i] == '.')
+				{
+					continue;
+				}
+				int thisRow = i / width;
+				int thisColumn = i % width;
+				var theseNeighbors = new List<int>();
+				for (int neighborRowDelta = -1; neighborRowDelta <= 1; neighborRowDelta++)
+				{
+					for (int neighborColumnDelta = -1; neighborColumnDelta <= 1; neighborColumnDelta++)
+					{
+						if (neighborRowDelta != 0 || neighborColumnDelta != 0)
+						{
+							int neighborRow = thisRow + neighborRowDelta;
+							int neighborColumn = thisColumn + neighborColumnDelta;
+							int neighborIndex = neighborRow * width + neighborColumn;
+							while (0 <= neighborRow && neighborRow < height
+								&& 0 <= neighborColumn && neighborColumn < width
+								&& layout[neighborIndex] == '.')
+							{
+								neighborRow += neighborRowDelta;
+								neighborColumn += neighborColumnDelta;
+								neighborIndex = neighborRow * width + neighborColumn;
+							}
+							if (0 <= neighborRow && neighborRow < height
+								&& 0 <= neighborColumn && neighborColumn < width
+								&& layout[neighborIndex] != '.')
+							{
+								theseNeighbors.Add(neighborIndex);
+							}
+						}
+					}
+				}
+				neighborsVisible.Add(i, theseNeighbors);
+			}
+		}
+
+			public int CountOccupied()
 		{
 			while (previousLayout.Count == 0 || !layout.SequenceEqual(previousLayout))
 			{
@@ -60,6 +108,24 @@
 					layout[i] = GetNewValue(i);
 				}
 			}
+			return GetCurrentOccupied();
+		}
+
+		public int CountOccupiedVisible()
+		{
+			while (previousLayout.Count == 0 || !layout.SequenceEqual(previousLayout))
+			{
+				previousLayout = new List<char>(layout);
+				for (int i = 0; i < previousLayout.Count; i++)
+				{
+					layout[i] = GetNewValueVisible(i);
+				}
+			}
+			return GetCurrentOccupied();
+		}
+
+		private int GetCurrentOccupied()
+		{
 			int occupiedCount = 0;
 			foreach (char thisLocation in layout)
 			{
@@ -79,7 +145,7 @@
 				int occupiedNeighborCount = 0;
 				foreach (int thisNeighborIndex in theseNeighbors)
 				{
-					if (previousLayout != null && previousLayout[thisNeighborIndex] == '#')
+					if (previousLayout[thisNeighborIndex] == '#')
 					{
 						occupiedNeighborCount++;
 					}
@@ -102,6 +168,40 @@
 				return '.';
 			}
 		}
+
+		private char GetNewValueVisible(int index)
+		{
+			if (neighborsVisible.TryGetValue(index, out List<int>? theseNeighbors))
+			{
+				char currentValue = previousLayout[index];
+				int occupiedNeighborCount = 0;
+				foreach (int thisNeighborIndex in theseNeighbors)
+				{
+					if (previousLayout[thisNeighborIndex] == '#')
+					{
+						occupiedNeighborCount++;
+					}
+				}
+				if (currentValue == 'L' && occupiedNeighborCount == 0)
+				{
+					return '#';
+				}
+				else if (currentValue == '#' && occupiedNeighborCount >= 5)
+				{
+					return 'L';
+				}
+				else
+				{
+					return currentValue;
+				}
+			}
+			else
+			{
+				return '.';
+			}
+		}
+
+
 
 	}
 }
