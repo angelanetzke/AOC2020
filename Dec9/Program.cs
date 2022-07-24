@@ -1,13 +1,15 @@
 ﻿var allLines = System.IO.File.ReadAllLines("input.txt");
-Part1(allLines);
-
-static void Part1(string[] allLines)
+var numbers = new long[allLines.Length];
+for (int i = 0; i < allLines.Length; i++)
 {
-	var numbers = new long[allLines.Length];
-	for (int i = 0; i < allLines.Length; i++)
-	{
-		numbers[i] = long.Parse(allLines[i]);
-	}
+	numbers[i] = long.Parse(allLines[i]);
+}
+long invalidNumber = Part1(numbers);
+Part2(invalidNumber, numbers);
+
+static long Part1(long[] numbers)
+{
+	
 	int checkIndex = 25;	
 	while(checkIndex < numbers.Length)
 	{
@@ -35,7 +37,43 @@ static void Part1(string[] allLines)
 		{
 			long invalidNumber = numbers[checkIndex];
 			Console.WriteLine($"Part 1: {invalidNumber}");
-			return;
+			return invalidNumber;
 		}		
+	}
+	return -1L;
+}
+
+static void Part2(long invalidNumber, long[] numbers)
+{
+	//keys are the index of the first number in the set and values are the sum for the current setSize
+	var sum = new Dictionary<int, long>();
+	for (int i = 0; i < numbers.Length; i++)
+	{
+		sum[i] = numbers[i];
+	}
+	int setSize = 2;
+	while (setSize < numbers.Length)
+	{
+		for (int i = 0; i <= numbers.Length - setSize; i++)
+		{
+			long newSum = sum[i] + numbers[i + setSize - 1];
+			if (newSum == invalidNumber)
+			{
+				var solutionSet = new List<long>();
+				for (int j = i; j <= i + setSize - 1; j++)
+				{
+					solutionSet.Add(numbers[j]);
+				}
+				solutionSet.Sort();
+				long answer = solutionSet[0] + solutionSet[setSize - 1];
+				Console.WriteLine($"Part 2: {answer}");
+				return;
+			}
+			else
+			{
+				sum[i] = newSum;
+			}
+		}
+		setSize++;
 	}
 }
