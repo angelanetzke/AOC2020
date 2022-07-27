@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using System.Text;
 
 namespace Dec14
 {
@@ -34,7 +35,7 @@ namespace Dec14
 				string valueString = memoryRegex.Match(nextLine).Groups["value"].Value;
 				valueString = Convert.ToString(long.Parse(valueString), 2);
 				valueString = new string('0', mask.Length - valueString.Length) + valueString;
-				var builder = new System.Text.StringBuilder();
+				var builder = new StringBuilder();
 				for (int i = 0; i < valueString.Length; i++)
 				{
 					if (mask[i] == 'X')
