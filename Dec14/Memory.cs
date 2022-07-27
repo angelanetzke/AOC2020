@@ -33,7 +33,7 @@ namespace Dec14
 				long address = long.Parse(memoryRegex.Match(nextLine).Groups["address"].Value);
 				string valueString = memoryRegex.Match(nextLine).Groups["value"].Value;
 				valueString = Convert.ToString(long.Parse(valueString), 2);
-				valueString = new string('0', 36 - valueString.Length) + valueString;
+				valueString = new string('0', mask.Length - valueString.Length) + valueString;
 				var builder = new System.Text.StringBuilder();
 				for (int i = 0; i < valueString.Length; i++)
 				{
