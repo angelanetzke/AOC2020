@@ -1,12 +1,18 @@
 ﻿var allLines = System.IO.File.ReadAllLines("input.txt");
-Part1(allLines);
+Solve(allLines, false);
+Solve(allLines, true);
 
-static void Part1(string[] allLines)
+static void Solve(string[] allLines, bool isPart2)
 {
 	var startingNumbers = Array.ConvertAll(allLines[0].Split(','), thisString => int.Parse(thisString));
 	var lastNumberIndices = new Dictionary<int, List<int>>();
 	int lastNumber = 0;
-	for (int i = 1; i <= 2020; i++)
+	int turnCount = 2020;
+	if (isPart2)
+	{
+		turnCount = 30000000;
+	}
+	for (int i = 1; i <= turnCount; i++)
 	{
 		if (i - 1 < startingNumbers.Length)
 		{
@@ -31,7 +37,15 @@ static void Part1(string[] allLines)
 			}
 		}
 	}
-	Console.WriteLine($"Part 1: {lastNumber}");
+	if (isPart2)
+	{
+		Console.WriteLine($"Part 2: {lastNumber}");
+	}
+	else
+	{
+		Console.WriteLine($"Part 1: {lastNumber}");
+	}
+	
 }
 
 static void Update(int turn, int value, Dictionary<int, List<int>> theDictionary)
