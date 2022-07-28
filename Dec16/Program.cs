@@ -1,25 +1,18 @@
 ﻿using Dec16;
-using System.Text.RegularExpressions;
 
 var allLines = System.IO.File.ReadAllLines("input.txt");
-Part1(allLines);
+var collection = new TicketCollection(allLines);
+Part1(collection);
+Part2(collection);
 
-static void Part1(string[] allLines)
+static void Part1(TicketCollection collection)
 {
-	List<string> rules = new();
-	var ruleRegex = new Regex(@"^[a-z ]+: \d+-\d+ or \d+-\d+$");
-	var ticketRegex = new Regex(@"^[\d+,]+$");
-	int errorRate = 0;
-	foreach (string thisLine in allLines)
-	{
-		if (ruleRegex.IsMatch(thisLine))
-		{
-			rules.Add(thisLine);
-		}
-		if (ticketRegex.IsMatch(thisLine))
-		{
-			errorRate += (new Ticket(thisLine, rules)).GetErrorRate();
-		}
-	}
+	int errorRate = collection.GetErrorRate();
 	Console.WriteLine($"Part 1: {errorRate}");
+}
+
+static void Part2(TicketCollection collection)
+{
+	long part2Answer = collection.GetDepartureProduct();
+	Console.WriteLine($"Part 2: {part2Answer}");
 }

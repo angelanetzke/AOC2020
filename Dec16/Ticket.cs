@@ -4,8 +4,8 @@ namespace Dec16
 {
 	internal class Ticket
 	{
-		int[] fieldValues;
-		List<string> rules;
+		private readonly int[] fieldValues;
+		private readonly List<string> rules;
 
 		public Ticket(string ticketData, List<string> rules)
 		{
@@ -35,18 +35,20 @@ namespace Dec16
 			return errorRate;
 		}
 
-		private static bool Validate(int value, string rule)
+		public static bool Validate(int value, string rule)
 		{
-			//departure location: 41-525 or 538-968
 			var ruleRegex = new Regex(@"^[a-z ]+: (?<min1>\d+)-(?<max1>\d+) or (?<min2>\d+)-(?<max2>\d+)$");
 			int min1 = int.Parse(ruleRegex.Match(rule).Groups["min1"].Value);
 			int max1 = int.Parse(ruleRegex.Match(rule).Groups["max1"].Value);
 			int min2 = int.Parse(ruleRegex.Match(rule).Groups["min2"].Value);
 			int max2 = int.Parse(ruleRegex.Match(rule).Groups["max2"].Value);
 			return (min1 <= value && value <= max1) || (min2 <= value && value <= max2);
-
 		}
 
+		public int GetValue(int index)
+		{
+			return fieldValues[index];
+		}
 
 	}
 }
