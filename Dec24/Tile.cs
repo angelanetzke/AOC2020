@@ -11,6 +11,18 @@
 			this.y = y;
 		}
 
+		public Tile[] GetNeighbors()
+		{
+			var neighbors = new Tile[6];
+			neighbors[0] = new Tile(x + 10, y);
+			neighbors[1] = new Tile(x + 5, y + 5);
+			neighbors[2] = new Tile(x - 5, y + 5);
+			neighbors[3] = new Tile(x - 10, y);
+			neighbors[4] = new Tile(x + 5, y - 5);
+			neighbors[5] = new Tile(x - 5, y - 5);
+			return neighbors;
+		}
+
 		public override bool Equals(object? obj)
 		{
 			if (obj == null)
