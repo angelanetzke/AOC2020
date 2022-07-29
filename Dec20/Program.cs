@@ -1,13 +1,14 @@
 ﻿using Dec20;
 
 var allLines = System.IO.File.ReadAllLines("input.txt");
-Part1(allLines);
+var tiles = new List<Tile>();
+Part1(allLines, tiles);
+Part2(tiles);
 
-static void Part1(string[] allLines)
+static void Part1(string[] allLines, List<Tile> tiles)
 {
-	var tiles = new List<Tile>();
 	var thisTileData = new List<string>();
-	foreach(string thisLine in allLines)
+	foreach (string thisLine in allLines)
 	{
 		if (thisLine.Length == 0)
 		{
@@ -43,3 +44,44 @@ static void Part1(string[] allLines)
 	}
 	Console.WriteLine($"Part 1: {product}");
 }
+
+static void Part2(List<Tile> tiles)
+{
+	var combinedMap = new List<Tile>();
+	Tile upperLeft = tiles[0];
+	foreach (Tile thisTile in tiles)
+	{
+		if (thisTile.GetNeighborCount() == 2)
+		{
+			upperLeft = thisTile;
+			break;
+		}
+	}
+	for (int i = 1; i <= 8; i++)
+	{
+		if (upperLeft.IsUpperLeft(combinedMap))
+		{
+			break;
+		}
+		upperLeft.Rotate();
+		if (i == 4)
+		{
+			upperLeft.Flip();
+		}
+	}
+	Tile? rowStart = upperLeft;
+	Tile? cursor = upperLeft;
+	while (rowStart != null)
+	{
+		while (cursor != null)
+		{
+			combinedMap.Add(cursor);
+			cursor = cursor.SetEast(combinedMap);
+		}
+		rowStart = rowStart.SetSouth(combinedMap);
+		cursor = rowStart;
+	}
+	var finalMap = new FullMap(combinedMap);
+	Console.WriteLine(finalMap.GetRoughness());
+}
+
