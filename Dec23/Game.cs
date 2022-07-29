@@ -6,15 +6,35 @@ namespace Dec23
 	{
 		private Cup current;
 		private readonly int size;
+		private readonly bool isLargeGame;
+		private Dictionary<int, Cup> cupsByIndex = new();
 
-		public Game(string start)
+		public Game(string start, bool isLargeGame)
 		{
-			size = start.Length;
-			current = new Cup(int.Parse(start[0].ToString()));
-			Cup cursor = current;
-			for (int i = 1; i < start.Length; i++)
+			this.isLargeGame = isLargeGame;
+			if (isLargeGame)
 			{
-				var newCup = new Cup(int.Parse(start[i].ToString()));
+				size = 1000000;
+			}
+			else
+			{
+				size = start.Length;
+			}
+			current = new Cup(int.Parse(start[0].ToString()));
+			cupsByIndex[current.GetLabel()] = current;
+			Cup cursor = current;
+			for (int i = 1; i < size; i++)
+			{
+				Cup newCup;
+				if (i < start.Length)
+				{
+					newCup = new Cup(int.Parse(start[i].ToString()));
+				}
+				else
+				{
+					newCup = new Cup(i + 1);
+				}
+				cupsByIndex[newCup.GetLabel()] = newCup;
 				cursor.SetNext(newCup);
 				cursor = newCup;
 			}
@@ -49,11 +69,7 @@ namespace Dec23
 						destinationLabel = size;
 					}
 				}
-				var destinationCup = current;
-				while (destinationCup.GetLabel() != destinationLabel)
-				{
-					destinationCup = destinationCup.GetNext();
-				}
+				var destinationCup = cupsByIndex[destinationLabel];
 				var afterDestination = destinationCup.GetNext();
 				destinationCup.SetNext(removedStart);
 				removedEnd.SetNext(afterDestination);
@@ -64,18 +80,34 @@ namespace Dec23
 
 		public string GetLabels()
 		{
-			Cup? cursor = current;
-			while (cursor != null && cursor.GetLabel() != 1)
+			if (isLargeGame)
 			{
+				Cup? cursor = current;
+				while (cursor != null && cursor.GetLabel() != 1)
+				{
+					cursor = cursor.GetNext();
+				}
 				cursor = cursor.GetNext();
+				long label1 = cursor.GetLabel();
+				cursor = cursor.GetNext();
+				long label2 = cursor.GetLabel();
+				return (label1 * label2).ToString();
 			}
-			var builder = new StringBuilder();
-			for (int i = 1; i <= size - 1; i++)
+			else
 			{
-				cursor = cursor.GetNext();
-				builder.Append(cursor.GetLabel());
+				Cup? cursor = current;
+				while (cursor != null && cursor.GetLabel() != 1)
+				{
+					cursor = cursor.GetNext();
+				}
+				var builder = new StringBuilder();
+				for (int i = 1; i <= size - 1; i++)
+				{
+					cursor = cursor.GetNext();
+					builder.Append(cursor.GetLabel());
+				}
+				return builder.ToString();
 			}
-			return builder.ToString();
 		}
 
 	}
