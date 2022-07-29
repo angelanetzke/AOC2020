@@ -15,5 +15,5 @@ static void Part2(string[] allLines)
 {
 	var theGame = new Game(allLines);
 	int finalScore = int.Parse(theGame.PlayRecursive()[0]);
-	Console.WriteLine($"Part 1: {finalScore}");
+	Console.WriteLine($"Part 2: {finalScore}");
 }
