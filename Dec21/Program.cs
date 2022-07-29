@@ -1,5 +1,4 @@
 ﻿using Dec21;
-using System.Text.RegularExpressions;
 
 var allLines = System.IO.File.ReadAllLines("input.txt");
 var foods = new FoodCollection(allLines);
